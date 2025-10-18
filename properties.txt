@@ -1,0 +1,2 @@
+key=
+window.titles=PuTTY,2FA - Imran,Termius
