@@ -7,6 +7,7 @@ import pystray
 from PIL import Image, ImageDraw
 import sys
 import os
+import keyboard
 
 def load_properties(path="properties.txt"):
     props = {}
@@ -91,7 +92,7 @@ def do_drag(event):
     y = root.winfo_y() + (event.y - root._drag_y)
     root.geometry(f"+{x}+{y}")
 
-# --- Click-to-copy ---
+# --- copy ---
 def copy_code(event=None):
     code = code_label.cget("text")
     root.clipboard_clear()
@@ -125,8 +126,13 @@ root.attributes("-topmost", True)
 root.bind("<Button-1>", start_drag)
 root.bind("<B1-Motion>", do_drag)
 
-# Bind click-to-copy
-code_label.bind("<Button-1>", copy_code)
+# Bind keyboard shortcut for copy code
+def register_hotkey():
+    keyboard.add_hotkey("ctrl+shift", lambda: copy_code())
+    keyboard.wait()  # keeps thread alive
+
+threading.Thread(target=register_hotkey, daemon=True).start()
+
 
 # Tray-- Run tray in a separate thread
 threading.Thread(target=setup_tray, daemon=True).start()
